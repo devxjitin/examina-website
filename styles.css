@@ -544,3 +544,15 @@ nav .button.small{color:#fff}
 .brand-dot{background:linear-gradient(135deg,#8a7dff,#5eead4);-webkit-background-clip:text;background-clip:text;color:transparent}
 @media(max-width:760px){.brand-icon{width:38px;height:38px}}
 @media(prefers-reduced-motion:reduce){.brand-icon{transition:none}.brand:hover .brand-icon{transform:none}}
+
+/* ===== PC frame: light aluminium so the structure stands out on dark ===== */
+.pc{position:relative;isolation:isolate}
+.pc:before{content:"";position:absolute;inset:-8% -6% 4%;z-index:-1;background:radial-gradient(closest-side,#8a7dff55,#14d3b822 60%,transparent 75%);pointer-events:none}
+.pc-monitor{position:relative;background:linear-gradient(160deg,#f7f8ff 0%,#d3d7ee 42%,#a9aed0 100%);padding:11px 11px 22px;border-radius:18px;box-shadow:0 34px 70px #000000a0,0 0 0 1px #ffffff55,inset 0 1px 0 #ffffff,inset 0 -3px 6px #00000026}
+.pc-monitor:before{content:"";position:absolute;top:4px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#6d7298}
+.pc-monitor:after{content:"";position:absolute;bottom:7px;left:50%;width:34px;height:4px;margin-left:-17px;border-radius:4px;background:linear-gradient(90deg,#8a7dff,#5eead4);opacity:.9}
+.pc-screen{box-shadow:0 0 0 3px #10123a,0 0 0 4px #00000033;border-radius:6px}
+.pc-screen:after{content:"";position:absolute;inset:0;z-index:7;pointer-events:none;background:linear-gradient(115deg,#ffffff1f 0%,#ffffff08 28%,transparent 42%)}
+.pc-neck{width:17%;height:30px;margin:0 auto;background:linear-gradient(90deg,#8b90b8,#eef0ff 38%,#c5c9e4 62%,#868bb4);clip-path:polygon(14% 0,86% 0,100% 100%,0 100%)}
+.pc-base{width:40%;height:11px;margin:0 auto;border-radius:12px 12px 6px 6px;background:linear-gradient(#f1f2ff,#a2a7cb);box-shadow:0 20px 40px #000000a0,inset 0 1px 0 #fff}
+@media(max-width:560px){.pc-monitor{padding:8px 8px 16px;border-radius:14px}.pc-monitor:after{bottom:5px;width:26px;margin-left:-13px}.pc-neck{height:22px}.pc-base{height:9px}}
