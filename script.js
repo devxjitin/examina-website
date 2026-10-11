@@ -135,8 +135,10 @@ document.querySelector('#year').textContent = new Date().getFullYear();
     keys.querySelectorAll('kbd').forEach(k => k.classList.add('is-down'));
     await wait(450, t);
     keys.querySelectorAll('kbd').forEach(k => k.classList.remove('is-down'));
-    status.textContent = 'Examina is working…';
-    await wait(250, t);
+    // Request accepted: the cursor moves to the middle of the screen as the signal.
+    const r = screen.getBoundingClientRect();
+    place(r.width / 2, r.height / 2, 900);
+    await wait(900 + 700, t);
   }
 
   const scripts = [
