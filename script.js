@@ -22,49 +22,6 @@ document.addEventListener('keydown', event => {
 window.matchMedia('(min-width: 761px)').addEventListener('change', closeMenu);
 document.querySelector('#year').textContent = new Date().getFullYear();
 
-const enquiryForm = document.querySelector('#interest-form');
-if (enquiryForm) {
-  const plan = new URLSearchParams(window.location.search).get('plan');
-  const planSelect = enquiryForm.elements.namedItem('plan');
-  if (['lite', 'go', 'general', 'support'].includes(plan)) planSelect.value = plan;
-  const status = document.querySelector('#form-status');
-  const submitButton = enquiryForm.querySelector('button[type="submit"]');
-  let sending = false;
-  enquiryForm.addEventListener('submit', async event => {
-    event.preventDefault();
-    if (sending || !enquiryForm.reportValidity()) return;
-    sending = true;
-    submitButton.disabled = true;
-    enquiryForm.setAttribute('aria-busy', 'true');
-    status.className = '';
-    status.textContent = 'Sending your enquiry…';
-    const request = new AbortController();
-    const timeout = setTimeout(() => request.abort(), 20000);
-    try {
-      const response = await fetch(enquiryForm.action, {
-        method: 'POST',
-        body: new FormData(enquiryForm),
-        headers: { Accept: 'application/json' },
-        signal: request.signal
-      });
-      if (!response.ok) throw new Error('Enquiry submission failed');
-      status.className = 'success';
-      status.textContent = 'Thank you! Your enquiry has been sent. We will reply by email about your question or licence purchase. This is an enquiry, not a completed purchase.';
-      enquiryForm.reset();
-    } catch (error) {
-      status.className = 'error';
-      status.textContent = error.name === 'AbortError'
-        ? 'The request timed out. Delivery could not be confirmed. Your details are still here; please try again later.'
-        : 'Your enquiry could not be confirmed. Your details are still here. Check your connection and try again.';
-    } finally {
-      clearTimeout(timeout);
-      sending = false;
-      submitButton.disabled = false;
-      enquiryForm.removeAttribute('aria-busy');
-    }
-  });
-}
-
 // Practice examples are illustrative, not screenshots of an app interface.
 const practiceCarousel = document.querySelector('.practice-carousel');
 if (practiceCarousel) {
