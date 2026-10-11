@@ -161,7 +161,8 @@ nav>a.active:not(.button){background:#eef0ff;border-radius:6px;padding:8px 10px}
 nav>a.button.active{box-shadow:0 0 0 3px #5b3df040}
 .reviews{background:var(--soft);max-width:none}
 .reviews>*{max-width:1120px;margin-left:auto;margin-right:auto}
-.review-grid{display:grid;grid-template-columns:minmax(0,720px);justify-content:center;gap:24px}
+.review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-width:1000px;margin:auto;gap:24px}
+@media(max-width:760px){.review-grid{grid-template-columns:1fr}}
 .review-card{margin:0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:34px 36px;box-shadow:0 14px 40px #17184a12;position:relative}
 .quote-ico{width:34px;height:34px;color:#c7cdf6;margin-bottom:12px}
 .review-card blockquote{margin:0 0 24px;font-size:18px;line-height:1.7;color:var(--ink);letter-spacing:-.2px}
