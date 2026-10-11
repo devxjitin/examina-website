@@ -426,3 +426,34 @@ document.querySelector('#year').textContent = new Date().getFullYear();
     }, { threshold: 0.35 }).observe(stage);
   } else { visible = true; play(0); }
 })();
+
+// FAQ topics: tabs with a short accordion in each panel
+(function () {
+  const root = document.querySelector('.faq-ui');
+  if (!root) return;
+  const tabs = Array.from(root.querySelectorAll('.faq-cat'));
+  const panels = Array.from(root.querySelectorAll('.faq-panel'));
+  function select(i, focus) {
+    tabs.forEach((t, n) => { t.setAttribute('aria-selected', String(n === i)); t.tabIndex = n === i ? 0 : -1; });
+    panels.forEach((p, n) => { p.hidden = n !== i; });
+    const first = panels[i].querySelector('details');
+    if (first && !panels[i].querySelector('details[open]')) first.open = true;
+    if (focus) tabs[i].focus();
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(i, false));
+    t.addEventListener('keydown', e => {
+      let n = null;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+      if (e.key === 'Home') n = 0;
+      if (e.key === 'End') n = tabs.length - 1;
+      if (n !== null) { e.preventDefault(); select(n, true); }
+    });
+  });
+  // keep one answer open at a time, even where details[name] is not supported
+  root.querySelectorAll('details').forEach(d => d.addEventListener('toggle', () => {
+    if (!d.open) return;
+    d.parentElement.querySelectorAll('details').forEach(o => { if (o !== d) o.open = false; });
+  }));
+})();
