@@ -37,7 +37,15 @@ if (practiceCarousel) {
 
   function showSlide(index) {
     activeSlide = (index + slides.length) % slides.length;
-    slides.forEach((slide, position) => { slide.hidden = position !== activeSlide; });
+    const count = slides.length;
+    slides.forEach((slide, position) => {
+      let d = ((position - activeSlide) % count + count) % count;
+      if (d > count / 2) d -= count;
+      slide.classList.toggle('is-active', d === 0);
+      slide.classList.toggle('is-prev', d === -1);
+      slide.classList.toggle('is-next', d === 1);
+      slide.setAttribute('aria-hidden', d === 0 ? 'false' : 'true');
+    });
     dots.forEach((dot, position) => dot.setAttribute('aria-current', String(position === activeSlide)));
   }
   function updatePlayback() {
@@ -81,6 +89,23 @@ if (practiceCarousel) {
   document.addEventListener('visibilitychange', updatePlayback);
   practiceCarousel.querySelector('.carousel-controls').hidden = false;
   practiceCarousel.classList.add('demo-enabled');
+  slides.forEach((slide, position) => {
+    slide.hidden = false;
+    slide.addEventListener('click', () => { if (position !== activeSlide) navigate(position); });
+  });
+  function sizeSlides() {
+    slides.forEach(slide => { slide.style.position = 'relative'; slide.style.transform = 'none'; slide.style.left = '0'; slide.style.width = ''; });
+    const w = slideContainer.clientWidth;
+    const target = Math.min(400, w * 0.78);
+    slides.forEach(slide => { slide.style.width = target + 'px'; });
+    const h = Math.max.apply(null, slides.map(slide => slide.offsetHeight));
+    slides.forEach(slide => { slide.style.position = ''; slide.style.transform = ''; slide.style.left = ''; slide.style.width = ''; });
+    slideContainer.style.height = h + 'px';
+  }
+  sizeSlides();
+  window.addEventListener('resize', sizeSlides);
+  window.addEventListener('load', sizeSlides);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeSlides);
   showSlide(0);
   updatePlayback();
 }
