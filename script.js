@@ -326,3 +326,103 @@ document.querySelector('#year').textContent = new Date().getFullYear();
   window.addEventListener('load', size);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);
 })();
+
+// Cursor signals demo (illustrative mock exam screen)
+(function () {
+  const stage = document.querySelector('.cs-stage');
+  if (!stage) return;
+  const section = document.querySelector('#cursor-signals');
+  const screen = stage.querySelector('.pc-screen');
+  const cursor = stage.querySelector('.pc-cursor');
+  const mark = stage.querySelector('.cs-mark');
+  const answer = stage.querySelector('.pc-answer');
+  const typed = stage.querySelector('.pc-typed');
+  const status = stage.querySelector('.pc-status');
+  const act = stage.querySelector('.cs-act');
+  const autoBtn = stage.querySelector('.cs-auto');
+  const items = Array.from(section.querySelectorAll('.cs-item'));
+  const acts = JSON.parse(section.querySelector('.cs-note').dataset.acts);
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const CANCEL = {};
+  const TEXT = 'A stack follows last in, first out: the newest item';
+  const points = [
+    { x: 0.5, y: 0.5, tone: 'ok', status: '✓ Request received' },
+    { x: 0.5, y: 0.5, tone: 'error', status: 'Licence or response error' },
+    { x: 0.07, y: 0.14, tone: 'check', status: 'Check your Gemini API key' },
+    { x: 0.9, y: 0.88, tone: 'check', status: 'Check your internet connection' },
+    { x: 0.07, y: 0.88, tone: 'ok', status: 'Typing stopped' }
+  ];
+  let token = 0, current = 0, auto = !reduce.matches, visible = false;
+
+  const wait = (ms, t) => new Promise((res, rej) => setTimeout(() => (t === token ? res() : rej(CANCEL)), ms));
+  function size() { const r = screen.getBoundingClientRect(); return { w: r.width, h: r.height }; }
+  function place(fx, fy, ms) {
+    const s = size();
+    cursor.style.transitionDuration = ms + 'ms';
+    cursor.style.transform = 'translate(' + fx * s.w + 'px,' + fy * s.h + 'px)';
+  }
+  function setMark(i, show) {
+    const s = size();
+    mark.style.transform = 'translate(' + points[i].x * s.w + 'px,' + points[i].y * s.h + 'px)';
+    mark.classList.toggle('is-on', show);
+  }
+  function select(i) {
+    current = i;
+    items.forEach((b, n) => { b.setAttribute('aria-pressed', String(n === i)); b.classList.toggle('is-active', n === i); });
+    stage.dataset.tone = points[i].tone;
+    act.textContent = acts[i];
+    status.textContent = 'Ready';
+    typed.textContent = '';
+    answer.classList.remove('is-typing');
+    cursor.classList.remove('is-text', 'is-click', 'is-hidden');
+    mark.classList.remove('is-on');
+  }
+  function finalState(i) {
+    select(i);
+    const p = points[i];
+    if (i === 4) { typed.textContent = TEXT; answer.classList.add('is-typing'); }
+    place(p.x, p.y, 0);
+    setMark(i, true);
+    status.textContent = p.status;
+  }
+  async function shake(t) {
+    const base = 0.5;
+    for (const dx of [-0.07, 0.07, -0.06, 0.06, -0.04, 0.04, 0]) { place(base + dx, 0.5, 90); await wait(100, t); }
+  }
+  async function play(i) {
+    const t = ++token;
+    if (reduce.matches) { finalState(i); return; }
+    select(i);
+    try {
+      const p = points[i];
+      if (i === 1) { place(0.5, 0.5, 0); await wait(500, t); } else if (i === 4) {
+        place(0.2, 0.55, 0); await wait(350, t);
+        cursor.classList.add('is-text'); answer.classList.add('is-typing');
+        for (const ch of TEXT) { typed.appendChild(document.createTextNode(ch)); await wait(42 + Math.random() * 18 - 6, t); }
+        cursor.classList.remove('is-text');
+        await wait(500, t);
+      } else { place(0.86, 0.84, 0); await wait(600, t); }
+      if (i === 1) { setMark(i, true); await shake(t); status.textContent = p.status; }
+      else { setMark(i, true); place(p.x, p.y, 1100); await wait(1200, t); status.textContent = p.status; }
+      await wait(auto ? 2800 : 2200, t);
+      if (!visible) return;
+      play(auto ? (i + 1) % points.length : i);
+    } catch (e) { if (e !== CANCEL) throw e; }
+  }
+  items.forEach((b, i) => b.addEventListener('click', () => { auto = false; syncAuto(); play(i); }));
+  function syncAuto() {
+    autoBtn.setAttribute('aria-pressed', String(auto));
+    autoBtn.textContent = auto ? 'Playing all signals · tap to stop' : 'Tap to play all signals';
+  }
+  autoBtn.addEventListener('click', () => { auto = !auto; syncAuto(); play(auto ? (current + 1) % points.length : current); });
+  syncAuto();
+  select(0);
+  setMark(0, false);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(entries => {
+      const v = entries[0].isIntersecting;
+      if (v && !visible) { visible = true; play(current); }
+      else if (!v) { visible = false; token++; }
+    }, { threshold: 0.35 }).observe(stage);
+  } else { visible = true; play(0); }
+})();
