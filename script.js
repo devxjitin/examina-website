@@ -84,3 +84,27 @@ if (practiceCarousel) {
   showSlide(0);
   updatePlayback();
 }
+
+// Sticky header shadow and active section highlight
+(function () {
+  const header = document.querySelector('#site-header');
+  const links = Array.from(document.querySelectorAll('#navigation > a:not(.button)'));
+  if (!header || !links.length) return;
+  const groups = { why: 'features', shortcuts: 'usage', video: 'guide', setup: 'guide', 'cursor-signals': 'guide', 'exam-assistance': 'compare' };
+  const sections = Array.from(document.querySelectorAll('main section[id]'));
+  function update() {
+    header.classList.toggle('scrolled', window.scrollY > 10);
+    const line = header.offsetHeight + 80;
+    let current = sections[0] ? sections[0].id : '';
+    sections.forEach(section => { if (section.getBoundingClientRect().top <= line) current = section.id; });
+    const target = groups[current] || current;
+    links.forEach(link => {
+      const active = link.getAttribute('href') === '#' + target;
+      link.classList.toggle('active', active);
+      if (active) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
