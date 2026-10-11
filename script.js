@@ -108,3 +108,94 @@ if (practiceCarousel) {
   window.addEventListener('resize', update);
   update();
 })();
+
+// Reviews slideshow
+(function () {
+  const stage = document.querySelector('.rv-stage');
+  if (!stage) return;
+  const cards = Array.from(stage.querySelectorAll('.rv-card'));
+  const dotsBox = document.querySelector('.rv-dots');
+  const pauseBtn = document.querySelector('.rv-pause');
+  const n = cards.length;
+  if (n < 2) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let active = 0, timer = null, paused = reduce, hovering = false;
+
+  const dots = cards.map((_, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Show review ' + (i + 1) + ' of ' + n);
+    b.addEventListener('click', () => { go(i); });
+    dotsBox.appendChild(b);
+    return b;
+  });
+
+  function size() {
+    cards.forEach(c => { c.style.height = 'auto'; });
+    const h = Math.max.apply(null, cards.map(c => c.offsetHeight));
+    stage.style.setProperty('--rv-h', h + 'px');
+    stage.style.height = h + 'px';
+    cards.forEach(c => { c.style.height = ''; });
+  }
+
+  function render() {
+    cards.forEach((card, i) => {
+      let d = ((i - active) % n + n) % n;
+      if (d > n / 2) d -= n;
+      card.classList.toggle('is-active', d === 0);
+      card.classList.toggle('is-prev', d === -1);
+      card.classList.toggle('is-next', d === 1);
+      card.setAttribute('aria-hidden', d === 0 ? 'false' : 'true');
+      card.setAttribute('aria-roledescription', 'slide');
+      card.setAttribute('aria-label', (i + 1) + ' of ' + n);
+    });
+    dots.forEach((b, i) => b.setAttribute('aria-current', String(i === active)));
+  }
+
+  function go(i, user) {
+    active = (i + n) % n;
+    render();
+    restart();
+  }
+  function restart() {
+    clearInterval(timer);
+    if (!paused && !hovering) timer = setInterval(() => go(active + 1), 6000);
+  }
+  function setPaused(value) {
+    paused = value;
+    pauseBtn.classList.toggle('is-paused', paused);
+    pauseBtn.setAttribute('aria-label', paused ? 'Play automatic slideshow' : 'Pause automatic slideshow');
+    restart();
+  }
+
+  document.querySelector('.rv-prev').addEventListener('click', () => go(active - 1));
+  document.querySelector('.rv-next').addEventListener('click', () => go(active + 1));
+  pauseBtn.addEventListener('click', () => setPaused(!paused));
+  stage.addEventListener('mouseenter', () => { hovering = true; restart(); });
+  stage.addEventListener('mouseleave', () => { hovering = false; restart(); });
+  stage.addEventListener('focusin', () => { hovering = true; restart(); });
+  stage.addEventListener('focusout', () => { hovering = false; restart(); });
+  stage.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(active - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(active + 1); }
+  });
+  let startX = null;
+  stage.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', e => {
+    if (startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 40) go(active + (dx < 0 ? 1 : -1));
+    startX = null;
+  }, { passive: true });
+  cards.forEach((card, i) => card.addEventListener('click', () => { if (i !== active) go(i); }));
+
+  pauseBtn.classList.toggle('is-paused', paused);
+  if (paused) pauseBtn.setAttribute('aria-label', 'Play automatic slideshow');
+  stage.classList.add('is-ready');
+  size();
+  render();
+  restart();
+  window.addEventListener('resize', size);
+  window.addEventListener('load', size);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);
+})();
