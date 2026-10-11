@@ -156,3 +156,37 @@ nav>a.active{color:#5b3df0}
 nav>a:not(.button):after{display:none}
 nav>a.active:not(.button){background:#eef0ff;border-radius:6px;padding:8px 10px}
 }
+
+/* Reviews and active CTA */
+nav>a.button.active{box-shadow:0 0 0 3px #5b3df040}
+.reviews{background:var(--soft);max-width:none}
+.reviews>*{max-width:1120px;margin-left:auto;margin-right:auto}
+.review-grid{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(320px,380px);gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 6px 18px;margin:0 -6px;scrollbar-width:thin}
+.review-grid::-webkit-scrollbar{height:8px}
+.review-grid::-webkit-scrollbar-thumb{background:#d7d9f0;border-radius:4px}
+.review-card{scroll-snap-align:start;display:flex;flex-direction:column;height:100%}
+.review-card blockquote{flex:1}
+@media(max-width:620px){.review-grid{grid-auto-columns:minmax(260px,82vw)}}
+.review-card{margin:0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:34px 36px;box-shadow:0 14px 40px #17184a12;position:relative}
+.quote-ico{width:34px;height:34px;color:#c7cdf6;margin-bottom:12px}
+.review-card blockquote{margin:0 0 24px;font-size:18px;line-height:1.7;color:var(--ink);letter-spacing:-.2px}
+.review-card figcaption{display:flex;align-items:center;gap:14px}
+.avatar{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#5b3df0,#0f9d8e);color:#fff;font-weight:700;font-size:15px}
+.review-card strong{display:block;font-size:15px}
+.review-card small{color:var(--muted);font-size:12px}
+@media(max-width:760px){.review-card{padding:26px 22px}.review-card blockquote{font-size:16px}}
+
+/* Navbar fit: no wrapping, hamburger earlier on narrow screens */
+nav a{white-space:nowrap}
+@media(max-width:1200px) and (min-width:961px){nav{gap:18px;font-size:11px}nav .button.small{padding:14px 18px;margin-left:4px}.brand{font-size:25px}.brand-icon{width:36px;height:36px}}
+@media(max-width:960px){
+header{height:68px}
+.header-inner{padding:0 22px}
+.menu-toggle{display:flex;gap:10px;align-items:center;background:#eef0ff;border:0;padding:9px 13px;border-radius:6px;color:#3b2fc9;font-size:12px;cursor:pointer}
+nav{display:none;position:absolute;left:0;right:0;top:68px;padding:22px 25px;background:#fff;box-shadow:0 20px 30px #17184a1f;align-items:stretch;flex-direction:column;gap:6px}
+nav.open{display:flex}
+nav>a:not(.button){padding:11px 10px}
+nav>a:not(.button):after{display:none}
+nav>a.active:not(.button){background:#eef0ff;border-radius:6px}
+nav .button.small{align-self:flex-start;margin:10px 0 0}
+}

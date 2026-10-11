@@ -88,9 +88,9 @@ if (practiceCarousel) {
 // Sticky header shadow and active section highlight
 (function () {
   const header = document.querySelector('#site-header');
-  const links = Array.from(document.querySelectorAll('#navigation > a:not(.button)'));
+  const links = Array.from(document.querySelectorAll('#navigation > a'));
   if (!header || !links.length) return;
-  const groups = { why: 'features', shortcuts: 'usage', video: 'guide', setup: 'guide', 'cursor-signals': 'guide', 'exam-assistance': 'compare' };
+  const groups = { why: 'features', shortcuts: 'usage', video: 'guide', setup: 'guide', 'cursor-signals': 'guide', 'exam-assistance': 'compare', 'get-started': 'contact' };
   const sections = Array.from(document.querySelectorAll('main section[id]'));
   function update() {
     header.classList.toggle('scrolled', window.scrollY > 10);
