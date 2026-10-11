@@ -556,3 +556,14 @@ nav .button.small{color:#fff}
 .pc-neck{width:17%;height:30px;margin:0 auto;background:linear-gradient(90deg,#8b90b8,#eef0ff 38%,#c5c9e4 62%,#868bb4);clip-path:polygon(14% 0,86% 0,100% 100%,0 100%)}
 .pc-base{width:40%;height:11px;margin:0 auto;border-radius:12px 12px 6px 6px;background:linear-gradient(#f1f2ff,#a2a7cb);box-shadow:0 20px 40px #000000a0,inset 0 1px 0 #fff}
 @media(max-width:560px){.pc-monitor{padding:8px 8px 16px;border-radius:14px}.pc-monitor:after{bottom:5px;width:26px;margin-left:-13px}.pc-neck{height:22px}.pc-base{height:9px}}
+
+/* Licence info */
+.licence-card{display:flex;gap:18px;align-items:flex-start;max-width:900px;margin:28px auto 0;background:linear-gradient(135deg,#14163f,#0f2e3a);border:1px solid #2f6a73;border-radius:16px;padding:22px 24px;box-shadow:0 14px 40px #00000066}
+.licence-icon{flex-shrink:0;display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#5b3df0,#0f9d8e);color:#fff}
+.licence-icon .ico{width:24px;height:24px}
+.licence-body h3{margin:0 0 6px;font-size:18px;color:#fff}
+.licence-body p{margin:0 0 10px;font-size:14.5px;color:var(--muted)}
+.licence-body ul{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.licence-body li{position:relative;padding-left:22px;font-size:14px;color:#d6d9f5}
+.licence-body li:before{content:"✓";position:absolute;left:0;color:#5eead4;font-weight:700}
+@media(max-width:760px){.licence-card{flex-direction:column;gap:12px;padding:18px}.licence-body p,.licence-body li{font-size:14px}}
