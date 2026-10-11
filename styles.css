@@ -536,3 +536,11 @@ nav .button.small{color:#fff}
 @media(max-width:760px){.faq-tabs{padding-left:20px;padding-right:20px}.faq-panel details{padding:0 16px}.faq-panel summary{font-size:15px}.faq-panel details p{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.faq-panel{animation:none}}
 @media(max-width:900px){.faq-cat{grid-template-columns:minmax(0,1fr) auto;column-gap:8px}.faq-cat-name{font-size:14px}.faq-count{width:26px;height:26px;font-size:12px}}
+
+/* Logo */
+.brand{font-weight:800;letter-spacing:-1.2px}
+.brand-icon{width:44px;height:44px;margin-right:10px;filter:drop-shadow(0 6px 14px #5b3df066);transition:transform .35s cubic-bezier(.22,.8,.3,1),filter .35s}
+.brand:hover .brand-icon{transform:rotate(-6deg) scale(1.07);filter:drop-shadow(0 8px 18px #14d3b866)}
+.brand-dot{background:linear-gradient(135deg,#8a7dff,#5eead4);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-width:760px){.brand-icon{width:38px;height:38px}}
+@media(prefers-reduced-motion:reduce){.brand-icon{transition:none}.brand:hover .brand-icon{transform:none}}
