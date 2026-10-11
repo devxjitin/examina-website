@@ -118,3 +118,22 @@ nav>a.button.small{color:#fff}
 .final-actions .text-link{color:#fff}
 @media(max-width:900px){.why-grid{grid-template-columns:1fr 1fr}.stats-inner{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.why-grid,.plan-grid{grid-template-columns:1fr}.final-cta h2{font-size:30px}.stats-inner strong{font-size:30px}}
+
+/* SVG icons */
+.ico{width:1em;height:1em;display:block}
+.why-icon .ico,.feature-icon .ico{width:24px;height:24px}
+.feature-icon{width:60px;height:60px}
+.responsible-symbol .ico{width:42%;height:42%;stroke-width:1.2}
+.why-icon{background:linear-gradient(135deg,#5b3df0,#7a4df5);color:#fff;box-shadow:0 8px 18px #5b3df033}
+.feature-icon{background:linear-gradient(135deg,#eef0ff,#e3f7f3);color:#5b3df0}
+.floating-label span{display:inline-flex;vertical-align:middle}.floating-label .ico{width:20px;height:20px}
+
+/* Single page tweaks */
+.plans .pricing-grid{margin-top:0}
+.plans .price-card-top h2{font-size:32px}
+.guide-intro{padding:70px 30px 0}
+.guide-intro .section-heading{margin-bottom:0}
+#video.guide-video{padding-top:40px}
+#setup.guide-content{padding-top:30px}
+#cursor-signals.guide-content{padding-top:30px}
+section[id]{scroll-margin-top:20px}
