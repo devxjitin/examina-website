@@ -403,3 +403,67 @@ nav>a.active:not(.button){background:#1f2160;color:#fff}
 nav .button.small{color:#fff}
 }
 @media(max-width:960px){nav.open{gap:2px;max-height:calc(100vh - 68px);overflow-y:auto}}
+
+/* ===== Hero demo: one PC with a mock exam screen ===== */
+.pc-scene{position:relative;min-width:0;padding:34px 0 0}
+.pc{margin:0 auto;width:100%;max-width:600px}
+.pc-monitor{background:linear-gradient(160deg,#1d2050,#0b0c26);border-radius:16px;padding:10px;box-shadow:0 30px 80px #000000b0,0 0 0 1px #ffffff22}
+.pc-screen{container-type:inline-size;position:relative;aspect-ratio:16/10;border-radius:8px;overflow:hidden;background:#f6f7ff;color:#252336;display:flex;flex-direction:column;text-align:left}
+.pc-chrome{display:flex;align-items:center;gap:2.4cqw;height:7.2cqw;padding:0 2.6cqw;background:#e9ebfa;border-bottom:1px solid #d8dbf0;flex-shrink:0}
+.pc-lights{display:flex;gap:1.1cqw}
+.pc-lights i{width:1.6cqw;height:1.6cqw;border-radius:50%;background:#c3c7e6}
+.pc-url{flex:1;min-width:0;background:#fff;border-radius:1cqw;padding:.7cqw 2cqw;font-size:max(8px,2.1cqw);color:#7a7f9e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-pill{font-size:max(8px,2cqw);background:#e3f7f3;color:#0b6b60;border-radius:99px;padding:.7cqw 1.8cqw;white-space:nowrap}
+.pc-pages{position:relative;flex:1;min-height:0}
+.pc-page{position:absolute;inset:0;padding:2.6cqw 4cqw;opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;display:flex;flex-direction:column}
+.pc-page.is-active{opacity:1;visibility:visible}
+.pc-meta{display:flex;justify-content:space-between;align-items:center;gap:2cqw;font-size:max(8px,1.9cqw);letter-spacing:.06em;color:#8b8fb0}
+.pc-badge{background:#eef0ff;color:#4a3fd0;border-radius:99px;padding:.6cqw 1.8cqw;white-space:nowrap;letter-spacing:0}
+.pc-q,.pc-scene h3.pc-q{font-size:max(11px,3.2cqw);line-height:1.3;margin:1.8cqw 0 2.2cqw;color:#1c1e3a;font-weight:600;letter-spacing:-.01em}
+.pc-opts{display:grid;gap:1.5cqw}
+.pc-opt{display:flex;align-items:center;gap:2.4cqw;border:1px solid #d9dcf2;background:#fff;border-radius:1.4cqw;padding:1.4cqw 2.6cqw;font-size:max(10px,2.9cqw);color:#252336;transition:background .2s,border-color .2s,box-shadow .2s}
+.pc-opt b{display:grid;place-items:center;flex-shrink:0;width:4.4cqw;height:4.4cqw;border-radius:50%;border:1px solid #cdd1ec;font-size:max(8px,2.1cqw);font-weight:600;color:#6a6f94}
+.pc-opt.is-hover{border-color:#a99bff;background:#f7f6ff}
+.pc-opt.is-selected{border-color:#5b3df0;background:#eeebff;box-shadow:0 0 0 .5cqw #5b3df022}
+.pc-opt.is-selected b{background:#5b3df0;border-color:#5b3df0;color:#fff}
+.pc-tick{margin-left:auto;color:#5b3df0;font-weight:700;opacity:0;transition:opacity .2s}
+.pc-opt.is-selected .pc-tick{opacity:1}
+.pc-answer{flex:1;min-height:0;border:1px solid #d9dcf2;background:#fff;border-radius:1.4cqw;padding:2.4cqw 2.8cqw;font-size:max(10px,2.9cqw);line-height:1.55;color:#252336;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.pc-ph{color:#a2a6c4}
+.pc-answer.is-typing .pc-ph{display:none}
+.pc-answer.is-typing,.pc-editor.is-typing{border-color:#5b3df0;box-shadow:0 0 0 .6cqw #5b3df022}
+.pc-caret{display:none;width:.35cqw;min-width:2px;height:1.1em;background:#5b3df0;vertical-align:text-bottom;margin-left:1px;animation:pc-blink 1s steps(1) infinite}
+.is-typing .pc-caret{display:inline-block}
+@keyframes pc-blink{50%{opacity:0}}
+.pc-submit{margin-top:1.8cqw;align-self:flex-end;background:#5b3df0;color:#fff;border-radius:1.2cqw;padding:1.2cqw 3cqw;font-size:max(9px,2.3cqw);opacity:.45}
+.pc-editor{flex:1;min-height:0;border:1px solid #d9dcf2;border-radius:1.4cqw;overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:border-color .2s,box-shadow .2s}
+.pc-tab{display:flex;justify-content:space-between;padding:1.1cqw 2.4cqw;background:#f1f2fc;color:#8b8fb0;font-size:max(8px,2cqw);border-bottom:1px solid #e4e6f6}
+.pc-codewrap{flex:1;display:flex;min-height:0;overflow:hidden}
+.pc-gutter{display:flex;flex-direction:column;padding:1.8cqw 1.8cqw;color:#b4b8d4;font:max(9px,2.5cqw)/1.7 Consolas,"Courier New",monospace;text-align:right;background:#fafaff;border-right:1px solid #eceef9}
+.pc-codebox{margin:0;padding:1.8cqw 2.4cqw;font:max(9px,2.5cqw)/1.7 Consolas,"Courier New",monospace;color:#3a3d5c;white-space:pre-wrap;overflow-wrap:anywhere;flex:1;background:none;border:0}
+.tk-k{color:#8b45ba}.tk-f{color:#2872ae}.tk-n{color:#b86a35}.tk-c{color:#9a9dbb}
+.pc-foot{display:flex;justify-content:space-between;align-items:center;height:6cqw;padding:0 3cqw;background:#e9ebfa;border-top:1px solid #d8dbf0;font-size:max(8px,2cqw);color:#7a7f9e;flex-shrink:0}
+.pc-status{color:#5b3df0;font-weight:600}
+.is-done .pc-status{color:#0b7a5e}
+.pc-cursor{position:absolute;left:0;top:0;width:0;height:0;z-index:5;transition:transform 1.4s cubic-bezier(.45,.05,.25,1);will-change:transform;pointer-events:none}
+.pc-cursor svg{position:absolute;left:0;top:0;width:max(12px,3.6cqw);height:auto;filter:drop-shadow(0 .3cqw .6cqw #00000055)}
+.pc-cursor .pc-ibeam{display:none;width:max(7px,2cqw);margin-left:-1cqw;margin-top:-1.4cqw;filter:none}
+.pc-cursor.is-text .pc-arrow{display:none}
+.pc-cursor.is-text .pc-ibeam{display:block}
+.pc-ripple{position:absolute;left:-2.4cqw;top:-2.4cqw;width:4.8cqw;height:4.8cqw;border-radius:50%;border:2px solid #5b3df0;opacity:0}
+.pc-cursor.is-click .pc-ripple{animation:pc-ripple .5s ease-out}
+.pc-cursor.is-click .pc-arrow{transform:scale(.86);transform-origin:top left}
+@keyframes pc-ripple{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(1.5)}}
+.pc-cursor.is-hidden{display:none}
+.pc-neck{width:14%;height:22px;margin:0 auto;background:linear-gradient(#222554,#0b0c26)}
+.pc-base{width:36%;height:9px;margin:0 auto;border-radius:10px 10px 4px 4px;background:linear-gradient(#2a2d66,#14163a);box-shadow:0 14px 30px #00000077}
+.pc-keys{margin:20px auto 0;max-width:420px;transform:none}
+.pc-keys kbd{transition:transform .12s,background .12s,color .12s}
+.pc-keys kbd.is-down{transform:translateY(2px);background:#5b3df0;color:#fff;border-color:#5b3df0}
+.pc-scene .floating-label{right:auto;left:4%;top:8px;transform:rotate(-2deg);color:#252336;z-index:6}
+.pc-scene .carousel-controls{margin-top:18px}
+@media(max-width:560px){.pc-screen{aspect-ratio:4/3}.pc-monitor{padding:7px;border-radius:12px}.pc-url{display:none}.pc-pill{margin-left:auto}}
+@media(prefers-reduced-motion:reduce){.pc-cursor{transition:none}.pc-page{transition:none}}
+.pc-cursor svg{max-width:none}
+.pc-scene{padding-top:46px}
+.pc-scene .floating-label{top:4px}

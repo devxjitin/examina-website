@@ -22,93 +22,193 @@ document.addEventListener('keydown', event => {
 window.matchMedia('(min-width: 761px)').addEventListener('change', closeMenu);
 document.querySelector('#year').textContent = new Date().getFullYear();
 
-// Practice examples are illustrative, not screenshots of an app interface.
-const practiceCarousel = document.querySelector('.practice-carousel');
-if (practiceCarousel) {
-  const slides = [...practiceCarousel.querySelectorAll('.practice-slide')];
-  const dots = [...practiceCarousel.querySelectorAll('[data-slide]')];
-  const pauseButton = practiceCarousel.querySelector('.carousel-pause');
-  const slideContainer = practiceCarousel.querySelector('.practice-slides');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let activeSlide = 0;
-  let paused = reducedMotion.matches;
-  let hovered = false;
-  let timer;
+// Hero demo: one PC, three mock exam screens. Illustrative only, not an app screenshot.
+(function () {
+  const scene = document.querySelector('.pc-scene');
+  if (!scene) return;
+  const screen = scene.querySelector('.pc-screen');
+  const pages = Array.from(scene.querySelectorAll('.pc-page'));
+  const cursor = scene.querySelector('.pc-cursor');
+  const status = scene.querySelector('.pc-status');
+  const qn = scene.querySelector('.pc-qn');
+  const keys = scene.querySelector('.pc-keys');
+  const keyCap = keys.querySelector('.pc-key');
+  const modeLabel = keys.querySelector('.pc-mode');
+  const dots = Array.from(scene.querySelectorAll('[data-slide]'));
+  const pauseBtn = scene.querySelector('.carousel-pause');
+  const controls = scene.querySelector('.carousel-controls');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const CANCEL = {};
+  const SPEED = 42; // ms per character: a medium typing pace
+  const HOLD = 2600;
+  const modes = [
+    { key: 'Q', label: 'Multiple-choice practice' },
+    { key: 'S', label: 'Subjective practice' },
+    { key: 'C', label: 'Coding practice' }
+  ];
+  const WRITTEN = 'A stack follows last in, first out: the newest item is removed first. A queue follows first in, first out: the oldest item is removed first.';
+  const CODE = [
+    ['k', 'def '], ['f', 'squares'], ['p', '(numbers):\n    '], ['k', 'return '], ['p', '[n * n '], ['k', 'for '], ['p', 'n '], ['k', 'in '],
+    ['p', 'numbers]\n\n'], ['f', 'print'], ['p', '(squares(['], ['n', '2, 3, 4'], ['p', ']))\n'], ['c', '# [4, 9, 16]']
+  ];
+  let token = 0, active = 0, autoplay = !reduce.matches;
 
-  function showSlide(index) {
-    activeSlide = (index + slides.length) % slides.length;
-    const count = slides.length;
-    slides.forEach((slide, position) => {
-      let d = ((position - activeSlide) % count + count) % count;
-      if (d > count / 2) d -= count;
-      slide.classList.toggle('is-active', d === 0);
-      slide.classList.toggle('is-prev', d === -1);
-      slide.classList.toggle('is-next', d === 1);
-      slide.setAttribute('aria-hidden', d === 0 ? 'false' : 'true');
-    });
-    dots.forEach((dot, position) => dot.setAttribute('aria-current', String(position === activeSlide)));
+  const wait = (ms, t) => new Promise((res, rej) => setTimeout(() => (t === token ? res() : rej(CANCEL)), ms));
+
+  function place(x, y, ms) {
+    cursor.style.transitionDuration = ms + 'ms';
+    cursor.style.transform = 'translate(' + x + 'px,' + y + 'px)';
   }
-  function updatePlayback() {
-    clearInterval(timer);
-    const playing = !paused && !hovered && !document.hidden;
-    practiceCarousel.classList.toggle('demo-complete', paused || reducedMotion.matches);
-    practiceCarousel.classList.toggle('demo-paused', hovered || document.hidden);
-    slideContainer.setAttribute('aria-live', paused ? 'polite' : 'off');
-    pauseButton.setAttribute('aria-label', paused ? 'Play slideshow' : 'Pause slideshow');
-    pauseButton.textContent = paused ? '▶' : 'Ⅱ';
-    if (playing) timer = setInterval(() => showSlide(activeSlide + 1), 6000);
+  function target(el, dx, dy) {
+    const s = screen.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    return { x: r.left - s.left + dx * r.width, y: r.top - s.top + dy * r.height };
   }
-  function navigate(index) {
-    paused = true;
-    showSlide(index);
-    updatePlayback();
+  function startPoint() {
+    const s = screen.getBoundingClientRect();
+    return { x: s.width * 0.86, y: s.height * 0.84 };
   }
-  dots.forEach(dot => dot.addEventListener('click', () => navigate(Number(dot.dataset.slide))));
-  practiceCarousel.querySelectorAll('[data-direction]').forEach(button => {
-    button.addEventListener('click', () => navigate(activeSlide + Number(button.dataset.direction)));
-  });
-  pauseButton.addEventListener('click', () => {
-    paused = !paused;
-    updatePlayback();
-  });
-  practiceCarousel.addEventListener('mouseenter', () => { hovered = true; updatePlayback(); });
-  practiceCarousel.addEventListener('mouseleave', () => { hovered = false; updatePlayback(); });
-  practiceCarousel.addEventListener('focusin', event => {
-    if (event.target !== pauseButton) { paused = true; updatePlayback(); }
-  });
-  practiceCarousel.addEventListener('keydown', event => {
-    if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
-      event.preventDefault();
-      navigate(activeSlide + (event.key === 'ArrowRight' ? 1 : -1));
+  async function moveTo(el, dx, dy, ms, t) {
+    const p = target(el, dx, dy);
+    place(p.x, p.y, ms);
+    await wait(ms + 80, t);
+  }
+  async function click(t) {
+    cursor.classList.add('is-click');
+    await wait(160, t);
+    cursor.classList.remove('is-click');
+  }
+  async function typeText(node, text, t) {
+    for (const ch of text) {
+      node.appendChild(document.createTextNode(ch));
+      let d = SPEED + Math.random() * 18 - 6;
+      if (ch === '\n') d += 220; else if (ch === ',' || ch === ':' || ch === '.') d += 110;
+      await wait(d, t);
     }
-  });
-  reducedMotion.addEventListener('change', () => {
-    if (reducedMotion.matches) paused = true;
-    updatePlayback();
-  });
-  document.addEventListener('visibilitychange', updatePlayback);
-  practiceCarousel.querySelector('.carousel-controls').hidden = false;
-  practiceCarousel.classList.add('demo-enabled');
-  slides.forEach((slide, position) => {
-    slide.hidden = false;
-    slide.addEventListener('click', () => { if (position !== activeSlide) navigate(position); });
-  });
-  function sizeSlides() {
-    slides.forEach(slide => { slide.style.position = 'relative'; slide.style.transform = 'none'; slide.style.left = '0'; slide.style.width = ''; });
-    const w = slideContainer.clientWidth;
-    const target = Math.min(400, w * 0.78);
-    slides.forEach(slide => { slide.style.width = target + 'px'; });
-    const h = Math.max.apply(null, slides.map(slide => slide.offsetHeight));
-    slides.forEach(slide => { slide.style.position = ''; slide.style.transform = ''; slide.style.left = ''; slide.style.width = ''; });
-    slideContainer.style.height = h + 'px';
   }
-  sizeSlides();
-  window.addEventListener('resize', sizeSlides);
-  window.addEventListener('load', sizeSlides);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeSlides);
-  showSlide(0);
-  updatePlayback();
-}
+  async function typeCode(node, t) {
+    for (const [cls, text] of CODE) {
+      const span = document.createElement('span');
+      if (cls !== 'p') span.className = 'tk-' + cls;
+      node.appendChild(span);
+      for (const ch of text) {
+        span.appendChild(document.createTextNode(ch));
+        let d = SPEED + Math.random() * 18 - 6;
+        if (ch === '\n') d += 220;
+        await wait(d, t);
+      }
+    }
+  }
+
+  function reset(i) {
+    pages.forEach((p, n) => p.classList.toggle('is-active', n === i));
+    dots.forEach((d, n) => d.setAttribute('aria-current', String(n === i)));
+    const page = pages[i];
+    page.querySelectorAll('.is-selected,.is-hover,.is-focus,.is-typing').forEach(e => e.classList.remove('is-selected', 'is-hover', 'is-focus', 'is-typing'));
+    page.querySelectorAll('.pc-typed').forEach(e => { e.textContent = ''; });
+    scene.classList.remove('is-done');
+    status.textContent = 'Ready';
+    qn.textContent = String(i + 1);
+    keyCap.textContent = modes[i].key;
+    modeLabel.textContent = modes[i].label;
+    keys.querySelectorAll('kbd').forEach(k => k.classList.remove('is-down'));
+    cursor.classList.remove('is-text', 'is-click', 'is-hidden');
+    const sp = startPoint();
+    place(sp.x, sp.y, 0);
+  }
+  function finalState(i) {
+    reset(i);
+    const page = pages[i];
+    cursor.classList.add('is-hidden');
+    if (i === 0) { page.querySelector('[data-correct]').classList.add('is-selected'); status.textContent = '✓ Option B selected · review the answer'; }
+    if (i === 1) { page.querySelector('.pc-typed').textContent = WRITTEN; page.querySelector('.pc-answer').classList.add('is-typing'); status.textContent = '✓ Written answer entered · review it'; }
+    if (i === 2) {
+      const code = page.querySelector('.pc-typed');
+      CODE.forEach(([cls, text]) => { const s = document.createElement('span'); if (cls !== 'p') s.className = 'tk-' + cls; s.textContent = text; code.appendChild(s); });
+      page.querySelector('.pc-editor').classList.add('is-typing');
+      status.textContent = '✓ Code entered · review and test it';
+    }
+  }
+
+  async function pressKeys(t) {
+    await wait(500, t);
+    keys.querySelectorAll('kbd').forEach(k => k.classList.add('is-down'));
+    await wait(450, t);
+    keys.querySelectorAll('kbd').forEach(k => k.classList.remove('is-down'));
+    status.textContent = 'Examina is working…';
+    await wait(250, t);
+  }
+
+  const scripts = [
+    async function mcq(t) {
+      const opt = pages[0].querySelector('[data-correct]');
+      await pressKeys(t);
+      await moveTo(opt, 0.25, 0.5, 1500, t);
+      opt.classList.add('is-hover');
+      await wait(350, t);
+      await click(t);
+      opt.classList.remove('is-hover');
+      opt.classList.add('is-selected');
+      status.textContent = '✓ Option B selected · review the answer';
+    },
+    async function written(t) {
+      const box = pages[1].querySelector('.pc-answer');
+      await pressKeys(t);
+      await moveTo(box, 0.1, 0.25, 1400, t);
+      cursor.classList.add('is-text');
+      await wait(250, t);
+      await click(t);
+      box.classList.add('is-typing');
+      await wait(300, t);
+      await typeText(pages[1].querySelector('.pc-typed'), WRITTEN, t);
+      status.textContent = '✓ Written answer entered · review it';
+    },
+    async function code(t) {
+      const box = pages[2].querySelector('.pc-editor');
+      await pressKeys(t);
+      await moveTo(box, 0.22, 0.45, 1400, t);
+      cursor.classList.add('is-text');
+      await wait(250, t);
+      await click(t);
+      box.classList.add('is-typing');
+      await wait(300, t);
+      await typeCode(pages[2].querySelector('.pc-typed'), t);
+      status.textContent = '✓ Code entered · review and test it';
+    }
+  ];
+
+  async function play(i) {
+    const t = ++token;
+    active = (i + pages.length) % pages.length;
+    if (reduce.matches) { finalState(active); return; }
+    reset(active);
+    try {
+      await wait(350, t);
+      await scripts[active](t);
+      scene.classList.add('is-done');
+      if (autoplay) { await wait(HOLD, t); play(active + 1); }
+    } catch (e) { if (e !== CANCEL) throw e; }
+  }
+
+  function setAutoplay(on) {
+    autoplay = on;
+    pauseBtn.textContent = on ? 'Ⅱ' : '▶';
+    pauseBtn.setAttribute('aria-label', on ? 'Pause slideshow' : 'Play slideshow');
+    if (on && scene.classList.contains('is-done')) play(active + 1);
+  }
+  dots.forEach(d => d.addEventListener('click', () => play(Number(d.dataset.slide))));
+  scene.querySelectorAll('[data-direction]').forEach(b => b.addEventListener('click', () => play(active + Number(b.dataset.direction))));
+  pauseBtn.addEventListener('click', () => setAutoplay(!autoplay));
+  scene.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); play(active + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); play(active - 1); }
+  });
+  window.addEventListener('resize', () => { if (reduce.matches) return; const sp = startPoint(); if (!scene.classList.contains('is-done') && token) place(sp.x, sp.y, 0); });
+  controls.hidden = false;
+  if (reduce.matches) setAutoplay(false);
+  pauseBtn.textContent = autoplay ? 'Ⅱ' : '▶';
+  play(0);
+})();
 
 // Sticky header shadow and active section highlight
 (function () {
